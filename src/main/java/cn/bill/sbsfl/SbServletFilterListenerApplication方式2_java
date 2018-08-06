@@ -1,0 +1,43 @@
+package cn.bill.sbsfl;
+
+import java.util.EnumSet;
+
+import javax.servlet.DispatcherType;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.servlet.ServletContextInitializer;
+
+import cn.bill.sbsfl.filter.MyFilter1;
+import cn.bill.sbsfl.listener.MyListener;
+import cn.bill.sbsfl.servlet.MyServlet1;
+import cn.bill.sbsfl.servlet.MyServlet2;
+
+/**
+ * Description: Servlet，Filter，Listener注册方式2<br/>
+ * Date:2018年8月6日 下午1:16:31 <br/>
+ *
+ * @author fengminbiao@126.com
+ * @version
+ */
+@SpringBootApplication
+public class SbServletFilterListenerApplication implements ServletContextInitializer {
+
+	public static void main(String[] args) {
+		SpringApplication.run(SbServletFilterListenerApplication.class, args);
+	}
+
+	@Override
+	public void onStartup(ServletContext servletContext) throws ServletException
+	{
+		servletContext.addServlet("myServlet1", MyServlet1.class).addMapping("/my1");
+		servletContext.addServlet("myServlet2", MyServlet2.class).addMapping("/my2");
+		//监听器要在过滤器之前
+		servletContext.addListener(MyListener.class);
+		
+		servletContext.addFilter("myFilter1", MyFilter1.class).addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/*");
+	}
+	
+}
